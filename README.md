@@ -13,6 +13,9 @@ It empowers users to participate in waste reduction challenges, set personal goa
 - Join challenges
 - Set and track individual waste reduction goals
 - Progress tracking (log daily progress, share achievements)
+     **Daily log feature**
+         A feature that enables participants to log their daily progress. For example, participants can input information about their waste reduction activities, such as reducing plastic usage, composting, or using sustainable transportation.
+
 - Community interaction (This is optional but its still a feature that could be added to the prototype)
 - Achievements and rewards (virtual badges and redeemable points)
 - Educational resources (optional)
@@ -29,8 +32,7 @@ These are the parameters for waste reduction challenges
 - Energy-saving challenge
 - Local produce challenge
 
-**Daily log feature**
-A feature that enables participants to log their daily progress. For example, participants can input information about their waste reduction activities, such as reducing plastic usage, composting, or using sustainable transportation.
+
 
 ## Workflow
 
