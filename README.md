@@ -21,6 +21,17 @@ It empowers users to participate in waste reduction challenges, set personal goa
 These are the parameters for waste reduction challenges
 - Duration for completing the challenge. It would be a week-long
 
+**Waste reduction Challenges users can participate in**
+- Plastic-Free week challenge
+- Zero-Waste Kitchen Challenge
+- Digital Detox challenge
+- Green commuting challenge
+- Energy-saving challenge
+- Local produce challenge
+
+**Daily log feature**
+A feature that enables participants to log their daily progress. For example, participants can input information about their waste reduction activities, such as reducing plastic usage, composting, or using sustainable transportation.
+
 ## Workflow
 
 1. User Registration:
