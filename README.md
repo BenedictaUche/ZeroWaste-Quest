@@ -41,9 +41,9 @@ These are the parameters for waste reduction challenges
 4. Set Personal Goals - Users will set individual waste reduction goals within the challenge parameters.
 5. Progress Logging - Participants log their progress regularly through the platform.
    **NOTE** - Challenges will expire one week after application
-**Daily log feature**
+- **Daily log feature**
 This feature will enable participants to log their daily progress. For example, participants can input information about their waste reduction activities, such as reducing plastic usage, composting, or using sustainable transportation.
-**Media Upload Capability**
+- **Media Upload Capability**
 An option for participants to upload photos or short videos showcasing their waste reduction efforts. This adds a visual component to their progress.
 <!-- 6. Community Interaction: Users can engage with the community, share experiences, and seek advice. (Optional) -->
 7. Achievements and Rewards - Users can receive virtual badges or points for reaching milestones.
