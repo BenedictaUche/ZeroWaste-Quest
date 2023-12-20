@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+
+:root {
+  --background: #A1C349;
+  --landing-text: #FFFFFF;
+  --header-font: 'Staatliches', sans-serif;
+  --body-font: 'DM Sans', sans-serif;
+
+}
+
+body {
+  background: var(--background);
+  font-family: var(--body-font);
+}
+
+h1,h2,h3 {
+  font-family: var(--header-font);
+}
+
+
+
+/*
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -24,4 +45,4 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
-}
+} */
