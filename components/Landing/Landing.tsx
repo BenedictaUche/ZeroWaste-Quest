@@ -1,5 +1,6 @@
 import { CSSProperties } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import ImageOne from "../../public/image1.png";
 import ImageTwo from "../../public/image2.png";
 import ImageThree from "../../public/man1.png";
@@ -93,7 +94,7 @@ const Landing = () => {
           time.
         </p>
         <button className="w-[250px] h-[2.7em] text-2xl bg-black rounded-[10px] mt-5 text-white">
-          Start Adventure
+          <Link href="/signup">Start Adventure</Link>
         </button>
         <Image
           src={ImageOne}
