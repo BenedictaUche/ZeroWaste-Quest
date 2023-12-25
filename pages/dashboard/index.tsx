@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import SidebarNav, { SidebarNavItem } from "@/components/sidebar-nav";
-import challenges from "./dashboard/challenges";
-import community from "./dashboard/community";
-import rewards from "./dashboard/rewards";
+import challenges from "./challenges";
+import community from "./community";
+import rewards from "./rewards";
 
 interface DashboardProps {
   children: React.ReactNode;
 }
 
-const Dashboard = ({ children }: DashboardProps) => {
+const index = ({ children }: DashboardProps) => {
   const [activeLink, setActiveLink] = useState<string>("home");
 
   const handleLinkClick = (link: string) => {
@@ -71,4 +71,4 @@ const Dashboard = ({ children }: DashboardProps) => {
   );
 };
 
-export default Dashboard;
+export default index;
