@@ -1,9 +1,11 @@
-// "use client"
+import { useState, useEffect, useRef } from "react";
 
-import { useState, useEffect } from "react";
 import * as z from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { auth } from '@/config/firebase';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +19,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
 import {
   Select,
   SelectContent,
@@ -26,48 +27,70 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const formSchema = z.object({
-  fullName: z.string(),
-  email: z.string().email(),
-  username: z
-    .string()
-    .min(9)
-    .max(20, "Username must be between 9 and 20 characters"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  goal: z.string(),
-  interest: z.enum([
-    "recycling",
-    "renewableEnergy",
-    "sustainableLiving",
-    "plasticFreeLiving",
-    "zeroKitchenWaste",
-  ]),
-  avatar: z.string(),
-});
+import { SignupFormData, formSchema } from "@/types/globals";
+import { updateProfile, createUserWithEmailAndPassword } from "firebase/auth";
+import { ref, uploadBytes } from "firebase/storage";
 
-interface SignupProps {
-    // types
+interface SignupProps {}
 
-}
 
 const Signup: React.FC<SignupProps> = () => {
-const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<SignupFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-        fullName: "",
-        email: "",
-        username: "",
-        password: "",
-        goal: "",
-        interest: "recycling" || "renewableEnergy" || "sustainableLiving" || "plasticFreeLiving" || "zeroKitchenWaste",
-        avatar: "",
+      fullName: "",
+      email: "",
+      username: "",
+      password: "",
+      goal: "",
+      interest: "recycling",
+      avatar: "",
     },
-});
+  });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  // const inputRef = React.forwardRef<HTMLInputElement>((props, ref) => (
+  //   <input {...props} ref={ref} />
+  // ));
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  // const handleFileChange = async (
+  //   e: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const fileInput = e.target;
+  //   const selectedFile = fileInput.files?.[0];
+
+  //   if (selectedFile) {
+  //     // You can upload the file to Firebase Storage here
+  //     const storageRef = ref(storage, `avatars/${selectedFile.name}`);
+  //     await uploadBytes(storageRef, selectedFile);
+
+  //     // Set the avatar field to the URL or storage reference
+  //     form.setValue("avatar", storageRef);
+  //   }
+  // };
+
+  const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
+    try {
+      const { email, password, fullName, goal, interest } = data;
+      await createUserWithEmailAndPassword(auth, email, password);
+      const user = auth.currentUser;
+      if (user) {
+        await updateProfile(user, { displayName: fullName, goalType: goal, interestType: interest });
+        console.log(user);
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   return (
     <div className="bg-gray-100 h-screen p-8 flex flex-col items-center">
@@ -90,6 +113,7 @@ const form = useForm<z.infer<typeof formSchema>>({
                   <FormControl>
                     <Input
                       {...field}
+                      ref={inputRef}
                       id="fullName"
                       placeholder="Enter full name"
                       className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
@@ -186,9 +210,12 @@ const form = useForm<z.infer<typeof formSchema>>({
                 <FormItem>
                   <FormLabel>Waste reduction interest</FormLabel>
                   <FormControl>
-                    <Select {...field}
-                    id="interest"
-                    onChange={(e) => form.setValue("interest", e.target.value)}
+                    <Select
+                      {...field}
+                      id="interest"
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                        form.setValue("interest", e.target.value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue>
@@ -217,7 +244,7 @@ const form = useForm<z.infer<typeof formSchema>>({
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="avatar"
               render={({ field }) => (
@@ -234,7 +261,7 @@ const form = useForm<z.infer<typeof formSchema>>({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
           </div>
 
           <Button
@@ -244,6 +271,13 @@ const form = useForm<z.infer<typeof formSchema>>({
             Sign Up
           </Button>
         </form>
+        <p>
+          Already have an account?{" "}
+          <Link href="/login" className="text-background underine">
+            Sign in
+          </Link>{" "}
+          to continue quest
+        </p>
       </Form>
     </div>
   );
