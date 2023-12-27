@@ -1,9 +1,9 @@
 import React from 'react'
 
-const challenges = () => {
+const Challenges = () => {
   return (
-    <div>challenges</div>
+    <div>Challenges</div>
   )
 }
 
-export default challenges
+export default Challenges
