@@ -2,7 +2,10 @@
 
 import React, { PureComponent } from "react";
 import Image from "next/image";
-import { PiStarLight, PiBook, PiCalendar } from "react-icons/pi";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import DailyLog from "@/components/dailyLog";
+import { PiStarLight, PiBook, PiCalendar, PiStar } from "react-icons/pi";
 import { TfiCup } from "react-icons/tfi";
 import Leaf from "@/public/leaf.svg";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
@@ -60,7 +63,7 @@ const data = [
 
 const Home = () => {
   return (
-    <div className="flex flex-col gap-16">
+    <div className="flex flex-col gap-10">
       <div className="bg-white rounded-lg shadow-lg p-4">
         <div className="flex items-center gap-6">
           <div>
@@ -96,30 +99,55 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={data}>
-                  <XAxis
-                    dataKey="name"
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => `$${value}`}
-                  />
-                  <Bar
-                    dataKey="total"
-                    fill="currentColor"
-                    radius={[4, 4, 0, 0]}
-                    className="fill-primary"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+        <div>
+          <ResponsiveContainer width="100%" height={350}>
+            <BarChart data={data}>
+              <XAxis
+                dataKey="name"
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `$${value}`}
+              />
+              <Bar
+                dataKey="total"
+                fill="currentColor"
+                radius={[4, 4, 0, 0]}
+                className="fill-primary"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      {/* To show users log */}
+      <DailyLog />
+
+      {/* To show user's achievements */}
+      <div className="bg-white rounded-lg shadow-lg p-4">
+        <div className="flex items-center gap-6">
+          <div>
+            <PiStar className="w-8 h-8 font-bold text-black/80" />
+          </div>
+          <div>
+            <h4 className="text-lime-500 font-bold text-xl">
+              Your Achievements
+            </h4>
+            <div className="inline-flex items-center gap-3">
+              <Badge className="bg-amber-300 text-yellow-800">Beginner</Badge>
+              <Badge className="bg-lime-300 text-lime-600">
+                Composting Pro
+              </Badge>
+              <Badge className="bg-teal-200 text-blue-600">Ocean saver</Badge>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

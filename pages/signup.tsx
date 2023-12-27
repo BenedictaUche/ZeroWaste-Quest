@@ -79,7 +79,7 @@ const Signup: React.FC<SignupProps> = () => {
       if (user) {
         await updateProfile(user, { displayName: fullName, goalType: goal, interestType: interest });
         console.log(user);
-        router.push("/dashboard");
+        router.push("/challenges");
       }
     } catch (error) {
       console.log(error);
