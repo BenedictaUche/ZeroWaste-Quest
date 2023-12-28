@@ -13,7 +13,7 @@ interface DashboardProps {
   children: React.ReactNode;
 }
 
-const index = ({  }: DashboardProps) => {
+const Index = ({  }: DashboardProps) => {
   const [activeLink, setActiveLink] = useState<string>("home");
   const contentRef = useRef<HTMLDivElement | null>(null);
 
@@ -87,4 +87,4 @@ const index = ({  }: DashboardProps) => {
   );
 };
 
-export default index;
+export default Index;
