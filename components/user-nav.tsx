@@ -19,17 +19,40 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 
 
   export function UserNav() {
 
     const [isLoggedIn, setIsLoggedIn] = useState(true)
+    const [showEditprofile, setShowEditProfile] = useState(false)
+
+    const SHEET_SIDES = ["top", "right", "bottom", "left"] as const
+
+    type SheetSide = (typeof SHEET_SIDES)[number]
 
     const handleLogin = () => {
         setIsLoggedIn(true)
         // toast.success("Logged in")
     }
+
+    const handleShowEditProfile = () => {
+        setShowEditProfile(true)
+    }
+
+
 
 
     return (
