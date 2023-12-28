@@ -26,7 +26,7 @@ interface LoginProps {}
 
 // const inputsRef = useRef<HTMLInputElement>(null);
 
-const login: React.FC<LoginProps> = () => {
+const Login: React.FC<LoginProps> = () => {
   const form = useForm<LoginFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -130,4 +130,4 @@ const login: React.FC<LoginProps> = () => {
   );
 };
 
-export default login;
+export default Login;

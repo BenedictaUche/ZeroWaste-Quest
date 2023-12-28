@@ -119,13 +119,13 @@ const Landing = () => {
           <div className="text-white font-normal text-base flex justify-between">
             <p className="w-[476px]">
               From recycling rubbish to adopting renewable energy, our
-              challenges cater to every eco-warrior’s ambition. Scroll through,
+              challenges cater to every eco-warrior's ambition. Scroll through,
               select and set personal goals. Saving Earth just became more fun
               and satisfying!
             </p>
             <p className="w-[476px]">
               From recycling rubbish to adopting renewable energy, our
-              challenges cater to every eco-warrior’s ambition. Scroll through,
+              challenges cater to every eco-warrior's ambition. Scroll through,
               select and set personal goals. Saving Earth just became more fun
               and satisfying!
             </p>
