@@ -134,6 +134,7 @@ const Landing = () => {
         <div className="flex justify-between items-center py-[10%]">
           {warriors.map((warrior) => {
             return (
+              <div key={warrior.name}>
               <div className="flex flex-col items-center">
                 <Image src={warrior.image} alt="Picture of a person" />
                 <h3 className="text-lime-400 text-base font-normal">
@@ -142,6 +143,7 @@ const Landing = () => {
                 <p className="text-white text-base font-normal">
                   {warrior.description}
                 </p>
+              </div>
               </div>
             );
           })}

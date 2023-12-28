@@ -4,7 +4,7 @@ import { PiBook, PiXBold } from "react-icons/pi";
 
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, UseFieldArrayProps } from "react-hook-form";
 import * as z from "zod";
 
 import { cn } from "@/lib/utils";
@@ -27,7 +27,18 @@ const dailyLogFormSchema = z.object({
   tags: z.array(z.string().nonempty({ message: "Tag is required" })),
 });
 
-type DailyLogFormValues = z.infer<typeof dailyLogFormSchema>;
+// type DailyLogFormValues = z.infer<typeof dailyLogFormSchema>;
+type Tag = {
+  tag: string;
+};
+
+
+type DailyLogFormValues = {
+  title: string;
+  description: string;
+  tags: Tag[];
+};
+
 
 const defaultValues: Partial<DailyLogFormValues> = {
   title: "",
@@ -42,8 +53,13 @@ export const DailyLogForm = () => {
     mode: "onBlur",
   });
 
+
+
+
+
+
   const { fields, append, remove } = useFieldArray({
-    name: "tags",
+    name: "tags" as const,
     control: form.control,
   });
 
