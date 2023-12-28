@@ -43,8 +43,8 @@ const Challenges = () => {
     return (
         <div className='bg-gray-100 h-screen'>
             <Navbar />
-            <div>
-                <h4>Your Challenges</h4>
+            <div className='px-10'>
+                <h4 className='font-bold text-2xl text-lime-700 py-4'>Your Challenges</h4>
                 <ChallengeCard challengeData={challengeData} />
             </div>
         </div>
