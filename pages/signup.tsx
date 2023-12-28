@@ -77,7 +77,7 @@ const Signup: React.FC<SignupProps> = () => {
       await createUserWithEmailAndPassword(auth, email, password);
       const user = auth.currentUser;
       if (user) {
-        await updateProfile(user, { displayName: fullName, goalType: goal, interestType: interest });
+        await updateProfile(user, { displayName: fullName });
         console.log(user);
         router.push("/challenges");
       }
