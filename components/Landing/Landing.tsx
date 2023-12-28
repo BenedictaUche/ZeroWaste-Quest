@@ -104,7 +104,7 @@ const Landing = () => {
       </div>
       <div style={backgroundStyle}>
         <h2 className="text-center text-white text-8xl md:text-4xl lg:text-5xl font-normal tracking-widest">
-          Waste not, want what's not.
+          Waste not, want what&apos;s not.
         </h2>
         <div
           className="bg-[#2C3C24CC] bg-opacity-80"
@@ -119,13 +119,13 @@ const Landing = () => {
           <div className="text-white font-normal text-base flex justify-between">
             <p className="w-[476px]">
               From recycling rubbish to adopting renewable energy, our
-              challenges cater to every eco-warrior's ambition. Scroll through,
+              challenges cater to every eco-warrior&apos;s ambition. Scroll through,
               select and set personal goals. Saving Earth just became more fun
               and satisfying!
             </p>
             <p className="w-[476px]">
               From recycling rubbish to adopting renewable energy, our
-              challenges cater to every eco-warrior's ambition. Scroll through,
+              challenges cater to every eco-warrior&apos;s ambition. Scroll through,
               select and set personal goals. Saving Earth just became more fun
               and satisfying!
             </p>
