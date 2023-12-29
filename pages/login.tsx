@@ -1,11 +1,11 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 import * as z from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/config/firebase";
 
 import {
@@ -23,10 +23,12 @@ import { LoginFormData, formSchema } from "@/types/globals";
 
 interface LoginProps {}
 
-
 // const inputsRef = useRef<HTMLInputElement>(null);
 
 const Login: React.FC<LoginProps> = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+
   const form = useForm<LoginFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,38 +39,28 @@ const Login: React.FC<LoginProps> = () => {
 
   const router = useRouter();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {};
-
-
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
+      const { email, password } = data;
       console.log("Form data:", data); // Log form data
 
-      const { email, password } = data;
       await signInWithEmailAndPassword(auth, email, password);
+      if(auth.currentUser) {
+        console.log(auth.currentUser);
+      } else {
+        console.log("No user");
+      }
 
-      console.log("Logged in successfully");
-      router.push("/dashboard");
+      console.log('Redirecting to /challenges');
+      router.push("/challenges");
     } catch (error) {
       console.error("Login error:", error);
     }
   };
 
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     console.log("User is signed in");
-  //     router.push("/dashboard");
-  //   } else {
-  //     console.log("User is not signed in");
-  //   }
-  // });
-
-
 
   return (
-    <div className="bg-gray-100 h-screen p-8 flex flex-col items-center">
+    <div className="bg-gray-100 h-min-screen p-8 flex flex-col items-center">
       <h2 className="text-4xl font-bold mb-4">zerowaste-quest</h2>
       <p>Continue the quest</p>
 
@@ -118,14 +110,22 @@ const Login: React.FC<LoginProps> = () => {
             )}
           />
 
-          <Button
-            type="submit"
-            className="bg-background hover:bg-green-300 text-white"
-          >
-            Login
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              type="submit"
+              className="bg-background hover:bg-lime-500 w-1/4"
+            >
+              Login
+            </Button>
+          </div>
         </form>
       </Form>
+      <p className="pt-4">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup" className="text-lime-500 hover:underline">
+          Create a new account
+        </Link>
+      </p>
     </div>
   );
 };
