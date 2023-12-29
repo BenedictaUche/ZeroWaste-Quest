@@ -2,10 +2,10 @@
 
 import React, { useState, useRef } from "react";
 import SidebarNav, { SidebarNavItem } from "@/components/sidebar-nav";
-import Challenges from "./challenges";
-import Community from "./community";
-import Rewards from "./rewards";
-import Home from "./home";
+import Challenges from "@/components/challenges";
+import Community from "@/components/community";
+import Rewards from "@/components/rewards";
+import Home from "@/components/home";
 import { PiHouse, PiUsers, PiGift } from "react-icons/pi";
 import { TfiCup } from "react-icons/tfi";
 

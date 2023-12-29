@@ -26,15 +26,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUser } from "@/components/UserContext";
 
 import { SignupFormData, formSchema } from "@/types/globals";
-import { updateProfile, createUserWithEmailAndPassword } from "firebase/auth";
+import { updateProfile, createUserWithEmailAndPassword, User } from "firebase/auth";
 import { ref, uploadBytes } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/config/firebase";
+import { UserData } from "@/types/globals";
 
 interface SignupProps {}
 
 
+
+
 const Signup: React.FC<SignupProps> = () => {
+  const { setUser } = useUser();
   const form = useForm<SignupFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,36 +55,22 @@ const Signup: React.FC<SignupProps> = () => {
     },
   });
 
-  // const inputRef = React.forwardRef<HTMLInputElement>((props, ref) => (
-  //   <input {...props} ref={ref} />
-  // ));
-
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  // const handleFileChange = async (
-  //   e: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const fileInput = e.target;
-  //   const selectedFile = fileInput.files?.[0];
-
-  //   if (selectedFile) {
-  //     // You can upload the file to Firebase Storage here
-  //     const storageRef = ref(storage, `avatars/${selectedFile.name}`);
-  //     await uploadBytes(storageRef, selectedFile);
-
-  //     // Set the avatar field to the URL or storage reference
-  //     form.setValue("avatar", storageRef);
-  //   }
-  // };
 
   const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
+
+
     try {
       const { email, password, fullName, goal, interest } = data;
       await createUserWithEmailAndPassword(auth, email, password);
       const user = auth.currentUser;
+      setUser({ username: fullName, email, fullName, goal, interest, avatar: '' });
       if (user) {
-        await updateProfile(user, { displayName: fullName, goalType: goal, interestType: interest });
+        const userDocRef = doc(db, "users", user.uid);
+        await setDoc(userDocRef, { fullName, email, goal, interest, avatar: "" });
+        await updateProfile(user, { displayName: fullName });
         console.log(user);
         router.push("/challenges");
       }
@@ -85,6 +78,7 @@ const Signup: React.FC<SignupProps> = () => {
       console.log(error);
     }
   };
+
 
   useEffect(() => {
     if (inputRef.current) {
@@ -212,13 +206,13 @@ const Signup: React.FC<SignupProps> = () => {
                   <FormControl>
                     <Select
                       {...field}
-                      id="interest"
+
+                    >
+                      <SelectTrigger asChild>
+                        <SelectValue id="interest"
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                         form.setValue("interest", e.target.value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue>
+                      }>
                           {field.value ? field.value : "Select an interest"}
                         </SelectValue>
                       </SelectTrigger>

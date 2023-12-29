@@ -35,3 +35,13 @@ export interface LoginFormData {
   email: string;
   password: string;
 }
+
+export interface UserData {
+  fullName: string;
+  email: string;
+  username: string;
+  password: string;
+  goal: string;
+  interest: string;
+  avatar: string;
+}

@@ -34,9 +34,9 @@
 
     --radius: 0.5rem;
 
-  --landing-text: #FFFFFF;
-  --header-font: 'Staatliches', sans-serif;
-  --body-font: 'DM Sans', sans-serif;
+    --landing-text: #FFFFFF;
+    --header-font: 'Staatliches', sans-serif;
+    --body-font: 'DM Sans', sans-serif;
   }
 
   .dark {
