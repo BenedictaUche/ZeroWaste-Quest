@@ -1,6 +1,6 @@
 "use client"
 import { useState } from 'react'
-import { useUser } from './UserContext'
+import { useUser } from '../context/UserContext'
 import {
     Avatar,
     AvatarFallback,
@@ -73,7 +73,7 @@ import {
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{user?.username}</p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {user?.email}
+                  {user?.username}
                 </p>
               </div>
             </DropdownMenuLabel>

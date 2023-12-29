@@ -26,7 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useUser } from "@/components/UserContext";
+import { useUser } from "@/context/UserContext";
 
 import { SignupFormData, formSchema } from "@/types/globals";
 import { updateProfile, createUserWithEmailAndPassword, User } from "firebase/auth";
@@ -208,7 +208,7 @@ const Signup: React.FC<SignupProps> = () => {
                       {...field}
 
                     >
-                      <SelectTrigger asChild>
+                      <SelectTrigger>
                         <SelectValue id="interest"
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                         form.setValue("interest", e.target.value)

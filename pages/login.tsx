@@ -56,15 +56,6 @@ const Login: React.FC<LoginProps> = () => {
     }
   };
 
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     console.log("User is signed in");
-  //     router.push("/dashboard");
-  //   } else {
-  //     console.log("User is not signed in");
-  //   }
-  // });
-
 
 
   return (
