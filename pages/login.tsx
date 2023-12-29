@@ -121,7 +121,7 @@ const Login: React.FC<LoginProps> = () => {
         </form>
       </Form>
       <p className="pt-4">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link href="/signup" className="text-lime-500 hover:underline">
           Create a new account
         </Link>
