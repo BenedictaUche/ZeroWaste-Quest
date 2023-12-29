@@ -33,7 +33,7 @@ import { updateProfile, createUserWithEmailAndPassword, User } from "firebase/au
 import { ref, uploadBytes } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
-import { UserData } from "@/types/globals";
+
 
 interface SignupProps {}
 
@@ -60,8 +60,6 @@ const Signup: React.FC<SignupProps> = () => {
 
 
   const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
-
-
     try {
       const { email, password, fullName, goal, interest } = data;
       await createUserWithEmailAndPassword(auth, email, password);
@@ -258,16 +256,18 @@ const Signup: React.FC<SignupProps> = () => {
             /> */}
           </div>
 
+            <div className="flex justify-center">
           <Button
             type="submit"
-            className="bg-background hover:bg-background-300"
+            className="bg-background hover:bg-lime-500 w-1/4"
           >
             Sign Up
           </Button>
+          </div>
         </form>
-        <p>
+        <p className="pt-4">
           Already have an account?{" "}
-          <Link href="/login" className="text-background underine">
+          <Link href="/login" className="text-lime-500 hover:underline">
             Sign in
           </Link>{" "}
           to continue quest
