@@ -3,6 +3,9 @@ A waste reduction challenge hub
 
 This is a community-driven platform dedicated to waste reduction and sustainable living. This project aims to inspire individuals to take meaningful actions towards reducing their environmental impact through engaging challenges and a supportive community.
 
+
+![Zerowaste-quest image](./public/Screenshot%202023-12-30%20074033.png )
+
 ## Project overview
 It empowers users to participate in waste reduction challenges, set personal goals, track progress, and connect with a like-minded community. By fostering a sense of collective responsibility, the platform strives to make a positive impact on the environment.
 
