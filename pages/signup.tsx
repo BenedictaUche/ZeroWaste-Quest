@@ -29,9 +29,9 @@ import {
 import { useUser } from "@/context/UserContext";
 
 import { SignupFormData, formSchema } from "@/types/globals";
-import { updateProfile, createUserWithEmailAndPassword, User } from "firebase/auth";
+import { updateProfile, createUserWithEmailAndPassword, User, onAuthStateChanged } from "firebase/auth";
 import { ref, uploadBytes } from "firebase/storage";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 
 
@@ -76,6 +76,20 @@ const Signup: React.FC<SignupProps> = () => {
       console.log(error);
     }
   };
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const userId = user.uid;
+
+      // Use the UID to fetch user data from Firestore
+      const userDoc = await getDoc(doc(db, 'users', userId));
+      const userData = userDoc.data();
+
+      console.log('User data:', userData);
+    } else {
+      console.log('User not signed in');
+    }
+  });
 
 
   useEffect(() => {

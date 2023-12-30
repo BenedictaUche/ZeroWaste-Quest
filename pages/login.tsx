@@ -60,7 +60,7 @@ const Login: React.FC<LoginProps> = () => {
 
 
   return (
-    <div className="bg-gray-100 h-min-screen p-8 flex flex-col items-center">
+    <div className="bg-gray-100 h-screen p-8 flex flex-col items-center">
       <h2 className="text-4xl font-bold mb-4">zerowaste-quest</h2>
       <p>Continue the quest</p>
 
