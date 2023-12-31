@@ -33,6 +33,7 @@ import { updateProfile, createUserWithEmailAndPassword, User, onAuthStateChanged
 import { ref, uploadBytes } from "firebase/storage";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
+import { useAuth } from "@/context/AuthContext";
 
 
 interface SignupProps {}
@@ -42,6 +43,8 @@ interface SignupProps {}
 
 const Signup: React.FC<SignupProps> = () => {
   const { setUser } = useUser();
+  const { auth } = useAuth();
+
   const form = useForm<SignupFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -58,6 +61,24 @@ const Signup: React.FC<SignupProps> = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userId = user.uid;
+
+        // Use the UID to fetch user data from Firestore
+        const userDoc = await getDoc(doc(db, 'users', userId));
+        const userData = userDoc.data();
+
+        console.log('User data:', userData);
+      } else {
+        console.log('User not signed in');
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup the listener when component unmounts
+  }, [auth]);
 
   const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
     try {
@@ -77,19 +98,19 @@ const Signup: React.FC<SignupProps> = () => {
     }
   };
 
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      const userId = user.uid;
+  // onAuthStateChanged(auth, async (user) => {
+  //   if (user) {
+  //     const userId = user.uid;
 
-      // Use the UID to fetch user data from Firestore
-      const userDoc = await getDoc(doc(db, 'users', userId));
-      const userData = userDoc.data();
+  //     // Use the UID to fetch user data from Firestore
+  //     const userDoc =   await getDoc(doc(db, 'users', userId));
+  //     const userData = userDoc.data();
 
-      console.log('User data:', userData);
-    } else {
-      console.log('User not signed in');
-    }
-  });
+  //     console.log('User data:', userData);
+  //   } else {
+  //     console.log('User not signed in');
+  //   }
+  // });
 
 
   useEffect(() => {

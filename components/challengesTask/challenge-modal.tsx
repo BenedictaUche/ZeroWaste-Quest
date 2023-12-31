@@ -5,7 +5,9 @@ import { Badge } from "../ui/badge";
 import { PiX } from "react-icons/pi";
 import { updateDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { addDays, getUnixTime } from 'date-fns';
-import { db } from '@/config/firebase';
+import { auth, db } from '@/config/firebase';
+import { collection } from "firebase/firestore";
+
 
 interface ChallengeModalProps {
   challenge: {
@@ -20,32 +22,29 @@ interface ChallengeModalProps {
 }
 
 const ChallengeModal: React.FC<ChallengeModalProps> = ({ challenge, onClose, }) => {
-
-  const [ isJoined, setIsJoined ] = useState(false);
+  const [isJoined, setIsJoined] = useState(false);
 
   const handleJoinChallenge = async () => {
     try {
-      // Update user data in Firebase to indicate they have joined the challenge
-      // For example, assuming you have a 'users' collection
+      // Get the user ID
+      const user = auth.currentUser;
+      if (!user) {
+        return;
+      }
+      const userId = user.uid;
+      // Update user document with joined challenges
       await updateDoc(doc(db, 'users', userId), {
-        joinedChallenges: {
-          [challenge.id]: {
+        joinedChallenges: { [challenge.id]: {
             joinedAt: serverTimestamp(),
           },
         },
       });
-      setIsJoined(true);
-
-      setTimeout(() => {
-        onClose();
-      }, 3000); // Close after 3 seconds
 
       // Start a 7-day countdown for the challenge
-      const challengeEndTime = addDays(new Date(), 7);
-      const challengeEndTimestamp = getUnixTime(challengeEndTime);
+      const challengeEndTimestamp = getUnixTime(addDays(new Date(), 7));
 
       // Save the challenge end timestamp in Firebase
-      await updateDoc(doc(db, 'challenges', challenge.id), {
+      await updateDoc(doc(collection(db, 'challenges'), challenge.id.toString()), {
         endTime: challengeEndTimestamp,
       });
     } catch (error) {

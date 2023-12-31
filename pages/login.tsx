@@ -1,51 +1,39 @@
-import { useRef, useEffect, useState } from "react";
-
+import { useState } from "react";
 import * as z from "zod";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/config/firebase";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/config/firebase";
-
-import {
-  Form,
-  FormField,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  FormItem,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 import { LoginFormData, formSchema } from "@/types/globals";
 
 interface LoginProps {}
 
-// const inputsRef = useRef<HTMLInputElement>(null);
-
 const Login: React.FC<LoginProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
-
-
-  const form = useForm<LoginFormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+  const [formData, setFormData] = useState<LoginFormData>({
+    email: "",
+    password: "",
   });
 
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
-    try {
-      const { email, password } = data;
-      console.log("Form data:", data); // Log form data
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
 
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const { email, password } = formData;
+      console.log("Form data:", formData);
+
+      setIsLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
-      if(auth.currentUser) {
+      if (auth.currentUser) {
         console.log(auth.currentUser);
       } else {
         console.log("No user");
@@ -55,71 +43,56 @@ const Login: React.FC<LoginProps> = () => {
       router.push("/challenges");
     } catch (error) {
       console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
 
   return (
     <div className="bg-gray-100 h-screen p-8 flex flex-col items-center">
       <h2 className="text-4xl font-bold mb-4">zerowaste-quest</h2>
       <p>Continue the quest</p>
 
-      <Form {...form}>
-        <form
-          action=""
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 w-full md:w-[500px] lg:w-[600px] xl:w-[700px] 2xl:w-[800px]"
-        >
-          <FormField
-            control={form.control}
+      <form
+        onSubmit={onSubmit}
+        className="flex flex-col gap-4 w-full md:w-[500px] lg:w-[600px] xl:w-[700px] 2xl:w-[800px]"
+      >
+        <div>
+          <label htmlFor="email">Email</label>
+          <Input
+            type="text"
+            id="email"
             name="email"
-            render={({ field, fieldState, formState }) => (
-              <FormItem>
-                <FormLabel htmlFor="emaii">Email</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    // ref={inputsRef}
-                    id="email"
-                    placeholder="Enter email"
-                    className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
-                  />
-                </FormControl>
-                <FormMessage>{formState.errors.email?.message}</FormMessage>
-              </FormItem>
-            )}
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="Enter email"
+            className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
           />
+        </div>
 
-          <FormField
-            control={form.control}
+        <div>
+          <label htmlFor="password">Password</label>
+          <Input
+            type="password"
+            id="password"
             name="password"
-            render={({ field, fieldState, formState }) => (
-              <FormItem>
-                <FormLabel htmlFor="password">Password</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    id="password"
-                    placeholder="Enter password"
-                    type="password"
-                    className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
-                  />
-                </FormControl>
-                <FormMessage>{formState.errors.password?.message}</FormMessage>
-              </FormItem>
-            )}
+            value={formData.password}
+            onChange={handleInputChange}
+            placeholder="Enter password"
+            className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
           />
+        </div>
 
-          <div className="flex justify-center">
-            <Button
-              type="submit"
-              className="bg-background hover:bg-lime-500 w-1/4"
-            >
-              Login
-            </Button>
-          </div>
-        </form>
-      </Form>
+        <div className="flex justify-center">
+          <Button
+            type="submit"
+            className="bg-background hover:bg-lime-500 w-1/4"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging In...' : 'Login'}
+          </Button>
+        </div>
+      </form>
       <p className="pt-4">
         Don&apos;t have an account?{" "}
         <Link href="/signup" className="text-lime-500 hover:underline">
