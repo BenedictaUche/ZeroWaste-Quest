@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { auth } from '@/config/firebase';
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
 
 import { Button } from "@/components/ui/button";
 import {
@@ -44,6 +46,7 @@ interface SignupProps {}
 const Signup: React.FC<SignupProps> = () => {
   const { setUser } = useUser();
   const { auth } = useAuth();
+  const toast = useToast();
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(formSchema),
@@ -91,10 +94,20 @@ const Signup: React.FC<SignupProps> = () => {
         await setDoc(userDocRef, { fullName, email, goal, interest, avatar: "" });
         await updateProfile(user, { displayName: fullName });
         console.log(user);
+        toast.toast({
+          title: "Account created successfully",
+          description: "Welcome to the quest!",
+        });
         router.push("/challenges");
       }
     } catch (error) {
       console.log(error);
+      toast.toast({
+        variant: "destructive",
+        title: "Signup failed",
+        description: "Please try again",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
     }
   };
 

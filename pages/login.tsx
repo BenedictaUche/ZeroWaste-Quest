@@ -1,12 +1,15 @@
+"use client"
+
 import { useState } from "react";
-import * as z from "zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/firebase";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LoginFormData, formSchema } from "@/types/globals";
+import { LoginFormData } from "@/types/globals";
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
 
 interface LoginProps {}
 
@@ -17,7 +20,9 @@ const Login: React.FC<LoginProps> = () => {
     password: "",
   });
 
+  const toast = useToast();
   const router = useRouter();
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,18 +40,33 @@ const Login: React.FC<LoginProps> = () => {
       await signInWithEmailAndPassword(auth, email, password);
       if (auth.currentUser) {
         console.log(auth.currentUser);
+        toast.toast({
+          title: "Logged in successfully",
+          description: "Welcome back!",
+        });
+        router.push("/challenges");
       } else {
         console.log("No user");
+        toast.toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: "Please try again",
+          action: <ToastAction altText="Try again">Try again</ToastAction>,
+        });
       }
-
-      console.log('Redirecting to /challenges');
-      router.push("/challenges");
     } catch (error) {
       console.error("Login error:", error);
+      toast.toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: "Please try again",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="bg-gray-100 h-screen p-8 flex flex-col items-center">
