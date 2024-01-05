@@ -97,15 +97,38 @@ const Signup: React.FC = () => {
       await createUserWithEmailAndPassword(auth, email, password);
       const user = auth.currentUser;
 
-      setUser({
-        uid: user.uid,
-        username: fullName,
-        email,
-        fullName,
-        goal,
-        interest,
-        avatar: "",
-      });
+      if (user && file) {
+        const userDocRef = doc(db, "users", user.uid);
+        await setDoc(userDocRef, {
+          fullName,
+          email,
+          goal,
+          interest,
+          avatar: "",
+        });
+        await updateProfile(user, { displayName: fullName });
+
+        // Upload avatar logic
+        const avatarRef = ref(storage, `avatars/${user.uid}/${avatar}`);
+        await uploadBytes(avatarRef, file);
+
+        toast.toast({
+          title: "Account created successfully",
+          description: "Welcome to the quest!",
+        });
+
+        router.push("/challenges");
+
+        setUser({
+          uid: user.uid,
+          username: fullName,
+          email,
+          fullName,
+          goal,
+          interest,
+          avatar: "",
+        });
+      }
 
       if (user&&file) {
         const userDocRef = doc(db, "users", user.uid);
