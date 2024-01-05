@@ -73,7 +73,7 @@ const AvailableChallenges: React.FC<ChallengeDataProps> = () => {
         {currentChallenges.map((item) => (
           <div key={item.id} className="w-full">
             <div className="w-full bg-black text-white rounded-full shadow flex gap-4 items-center">
-              <div className="w-36 h-auto p-5 bg-white rounded-full flex items-center justify-center">
+              <div className=" w-28 h-auto p-5 bg-white rounded-full flex items-center justify-center">
                 <Image src={CupLogo} alt="Cup Logo" />
               </div>
               <div className="py-3">

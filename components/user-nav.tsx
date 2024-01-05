@@ -1,4 +1,5 @@
 "use client"
+
 import { useState, useEffect } from 'react'
 import { useUser } from '../context/UserContext'
 import { useAuth } from '@/context/AuthContext'
@@ -119,10 +120,10 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
             <DropdownMenuSeparator />
             <DropdownMenuGroup></DropdownMenuGroup>
                 <DropdownMenuItem>
-                <Link href='/'>Log in</Link>
+                <Link href='/login'>Log in</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                <Link href='/'>Sign up</Link>
+                <Link href='/signup'>Sign up</Link>
                 </DropdownMenuItem>
             </DropdownMenuContent>
 
