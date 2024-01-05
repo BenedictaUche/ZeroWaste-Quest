@@ -53,5 +53,5 @@ An option for participants to upload photos or short videos showcasing their was
 <!-- 8. Educational Resources - Users access educational resources and tips for sustainable living. (Optional) -->
 
 
-## Tools
-- Nextjs, Typescript
+## Tools and Technologies
+- Nextjs, Typescript, Firebase, shadcn, cloudinary

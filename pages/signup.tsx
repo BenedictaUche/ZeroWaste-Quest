@@ -1,96 +1,72 @@
-import { useState, useEffect, useRef } from "react";
-
-import * as z from "zod";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
+import { useState, useEffect, useRef, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/router";
-import { auth } from '@/config/firebase';
-
+import { auth, db } from "@/config/firebase";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select } from "@/components/ui/select";
+import Link from "next/link";
 import { useUser } from "@/context/UserContext";
-
-import { SignupFormData, formSchema } from "@/types/globals";
-import { updateProfile, createUserWithEmailAndPassword, User, onAuthStateChanged } from "firebase/auth";
-import { ref, uploadBytes } from "firebase/storage";
+import { useAuth } from "@/context/AuthContext";
+import {
+  createUserWithEmailAndPassword,
+  User,
+  updateProfile,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { ref, uploadBytes, getStorage } from "firebase/storage";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { db } from "@/config/firebase";
 
 
-interface SignupProps {}
+interface SignupFormData {
+  fullName: string;
+  email: string;
+  username: string;
+  password: string;
+  goal: string;
+  interest: string;
+  avatar: string;
+}
 
-
-
-
-const Signup: React.FC<SignupProps> = () => {
+const Signup: React.FC = () => {
   const { setUser } = useUser();
-  const form = useForm<SignupFormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      fullName: "",
-      email: "",
-      username: "",
-      password: "",
-      goal: "",
-      interest: "recycling",
-      avatar: "",
-    },
+  const { auth } = useAuth();
+  const toast = useToast();
+
+  const [formData, setFormData] = useState<SignupFormData>({
+    fullName: "",
+    email: "",
+    username: "",
+    password: "",
+    goal: "",
+    interest: "recycling",
+    avatar: "",
   });
+  const [file, setFile] = useState<File | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const storage = getStorage();
 
-
-  const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
-    try {
-      const { email, password, fullName, goal, interest } = data;
-      await createUserWithEmailAndPassword(auth, email, password);
-      const user = auth.currentUser;
-      setUser({ username: fullName, email, fullName, goal, interest, avatar: '' });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userDocRef = doc(db, "users", user.uid);
-        await setDoc(userDocRef, { fullName, email, goal, interest, avatar: "" });
-        await updateProfile(user, { displayName: fullName });
-        console.log(user);
-        router.push("/challenges");
+        const userId = user.uid;
+
+        // Use the UID to fetch user data from Firestore
+        const userDoc = await getDoc(doc(db, "users", userId));
+        const userData = userDoc.data();
+
+        console.log("User data:", userData);
+      } else {
+        console.log("User not signed in");
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    });
 
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      const userId = user.uid;
-
-      // Use the UID to fetch user data from Firestore
-      const userDoc = await getDoc(doc(db, 'users', userId));
-      const userData = userDoc.data();
-
-      console.log('User data:', userData);
-    } else {
-      console.log('User not signed in');
-    }
-  });
-
+    return () => unsubscribe(); // Cleanup the listener when component unmounts
+  }, [auth]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -98,195 +74,157 @@ const Signup: React.FC<SignupProps> = () => {
     }
   }, []);
 
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setFormData((prevData) => ({ ...prevData, avatar: selectedFile.name }));
+    }
+  };
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const { email, password, fullName, goal, interest, avatar } = formData;
+      await createUserWithEmailAndPassword(auth, email, password);
+      const user = auth.currentUser;
+
+      setUser({
+        uid: user.uid,
+        username: fullName,
+        email,
+        fullName,
+        goal,
+        interest,
+        avatar: "",
+      });
+
+      if (user&&file) {
+        const userDocRef = doc(db, "users", user.uid);
+        await setDoc(userDocRef, {
+          fullName,
+          email,
+          goal,
+          interest,
+          avatar: "",
+        });
+        await updateProfile(user, { displayName: fullName });
+
+        // Upload avatar logic
+        const avatarRef = ref(storage, `avatars/${user.uid}/${avatar}`);
+        await uploadBytes(avatarRef, file);
+
+        toast.toast({
+          title: "Account created successfully",
+          description: "Welcome to the quest!",
+        });
+
+        router.push("/challenges");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.toast({
+        variant: "destructive",
+        title: "Signup failed",
+        description: "Please try again",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+    }
+  };
+
   return (
     <div className="bg-gray-100 h-screen p-8 flex flex-col items-center">
       <h2 className="text-4xl font-bold mb-4">zerowaste-quest</h2>
       <p>Join the quest</p>
+      <form
+        onSubmit={onSubmit}
+        className="flex flex-col gap-4 w-full md:w-[500px] lg:w-[600px] xl:w-[700px] 2xl:w-[800px]"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            ref={inputRef}
+            id="fullName"
+            name="fullName"
+            onChange={handleChange}
+            placeholder="Enter full name"
+            className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
+          />
+          <Input
+            id="email"
+            name="email"
+            onChange={handleChange}
+            placeholder="johndoe@example.com"
+            className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
+          />
+        </div>
 
-      <Form {...form}>
-        <form
-          action=""
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 w-full md:w-[500px] lg:w-[600px] xl:w-[700px] 2xl:w-[800px]"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field, formState }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      ref={inputRef}
-                      id="fullName"
-                      placeholder="Enter full name"
-                      className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      id="email"
-                      placeholder="johndoe@example.com"
-                      className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      id="username"
-                      placeholder="johndoe_99"
-                      className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      id="password"
-                      className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="goal"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Waste reduction goal</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    id="goal"
-                    className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            name="username"
+            id="username"
+            onChange={handleChange}
+            placeholder="johndoe_99"
+            className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="interest"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Waste reduction interest</FormLabel>
-                  <FormControl>
-                    <Select
-                      {...field}
+          <Input
+            name="password"
+            id="password"
+            onChange={handleChange}
+            placeholder="Enter password"
+            className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
+          />
+        </div>
 
-                    >
-                      <SelectTrigger>
-                        <SelectValue id="interest"
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        form.setValue("interest", e.target.value)
-                      }>
-                          {field.value ? field.value : "Select an interest"}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="recycling">Recycling</SelectItem>
-                        <SelectItem value="renewableEnergy">
-                          Renewable Energy
-                        </SelectItem>
-                        <SelectItem value="sustainableLiving">
-                          Sustainable Living
-                        </SelectItem>
-                        <SelectItem value="plasticFreeLiving">
-                          Plastic Free Living
-                        </SelectItem>
-                        <SelectItem value="zeroKitchenWaste">
-                          Zero Kitchen Waste
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <Textarea
+          name="goal"
+          id="goal"
+          onChange={handleChange}
+          className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
+        />
 
-            {/* <FormField
-              control={form.control}
-              name="avatar"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Avatar</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      id="avatar"
-                      type="file"
-                      className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <select name="interest" id="interest" onChange={handleChange}>
+            <option value="recycling">Recycling</option>
+            <option value="renewableEnergy">Renewable Energy</option>
+            <option value="sustainableLiving">Sustainable Living</option>
+            <option value="plasticFreeLiving">Plastic Free Living</option>
+            <option value="zeroKitchenWaste">Zero Kitchen Waste</option>
+          </select>
 
-            <div className="flex justify-center">
+          <Input
+            type="file"
+            id="avatar"
+            name="avatar"
+            onChange={handleFileChange}
+            className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
+          />
+        </div>
+
+        <div className="flex justify-center">
           <Button
             type="submit"
             className="bg-background hover:bg-lime-500 w-1/4"
           >
             Sign Up
           </Button>
-          </div>
-        </form>
-        <p className="pt-4">
-          Already have an account?{" "}
-          <Link href="/login" className="text-lime-500 hover:underline">
-            Sign in
-          </Link>{" "}
-          to continue quest
-        </p>
-      </Form>
+        </div>
+      </form>
+      <p className="pt-4">
+        Already have an account?{" "}
+        <Link href="/login" className="text-lime-500 hover:underline">
+          Sign in
+        </Link>{" "}
+        to continue quest
+      </p>
     </div>
   );
 };

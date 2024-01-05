@@ -1,10 +1,12 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { Firestore } from 'firebase/firestore';
+import { createContext, ReactNode, useContext, useId, useState } from 'react';
 
 interface UserContextProps {
   children: ReactNode;
 }
 
 interface UserData {
+  uid: string;
   username: string;
   email: string;
   fullName: string;
@@ -17,6 +19,8 @@ interface UserContextValue {
   user: UserData | null;
   username: string;
   email: string;
+  avatar: string;
+  uid: string;
   setUser: (userData: UserData | null) => void;
 }
 
@@ -30,7 +34,7 @@ export const UserProvider: React.FC<UserContextProps> = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, username: user?.username || '', email: user?.email || '', setUser }}>
+    <UserContext.Provider value={{ user, username: user?.username || '', email: user?.email || '', avatar: user?.avatar || '', uid: user?.uid || '', setUser }}>
       {children}
     </UserContext.Provider>
   );
