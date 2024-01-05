@@ -1,9 +1,12 @@
+'use client'
+
 import { useState } from "react";
 import Navbar from "@/components/nav";
 import ChallengeCard from "@/components/challengesTask/challenge-card";
 import CupLogo from "@/public/coffee-cup.svg";
 import CutleryLogo from "@/public/fork-kitchen.svg";
 import Leaderboard from "@/components/leaderboard";
+import AvailableChallenges from "@/components/availableChallenges";
 
 
 interface ChallengeData {
@@ -61,17 +64,21 @@ export const challengeData: ChallengeData[] = [
 const Challenges = () => {
 
   return (
-    <div className="bg-gray-100 h-min-screen ">
+    <div className="bg-gray-100 h-min-screen">
       <Navbar />
       <div className="px-10">
         <h4 className="font-bold text-2xl text-lime-700 py-4">
           Your Challenges
         </h4>
-        <ChallengeCard challengeData={challengeData} />
+        <ChallengeCard challenge={challengeData} />
       </div>
+
+      <AvailableChallenges challenge={challengeData} pageSize={3} onClose={() => {}} />
       <Leaderboard />
     </div>
   );
+
+
 };
 
 export default Challenges;

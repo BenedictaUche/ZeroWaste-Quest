@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import CupLogo from "@/public/coffee-cup.svg";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import ChallengeModal from "./challenge-modal";
-import AddChallengeModal from "./addChallengeModal";
+import ChallengeModal from "@/components/challengesTask/challenge-modal";
+import AddChallengeModal from "@/components/challengesTask/addChallengeModal";
 import { PiPlus } from "react-icons/pi";
 import { db } from "@/config/firebase";
 import { collection, addDoc, getDocs } from "firebase/firestore";
@@ -19,16 +19,17 @@ type ChallengeFormData = {
 
 interface ChallengeDataProps {
   challenge: any;
-
-  // onClose: () => void;
+  pageSize: number;
+  onClose: () => void;
 }
 
-const ChallengeCard: React.FC<ChallengeDataProps> = () => {
+const AvailableChallenges: React.FC<ChallengeDataProps> = () => {
   const [showDetailModal, setShowDetailModal] = useState<number | any>(null);
-  const [isChallengeModalOpen, setChallengeModalOpen] = useState(false);
   const [challenges, setChallenges] = useState<
     { [x: string]: any; id: string }[]
   >([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const challengesPerPage = 3;
 
   const handleShowDetailModal = (challengeId: number) => {
     setShowDetailModal(challengeId);
@@ -38,26 +39,13 @@ const ChallengeCard: React.FC<ChallengeDataProps> = () => {
     setShowDetailModal(null);
   };
 
-  const handleOpenChallengeModal = () => {
-    setChallengeModalOpen(true);
-  };
+  const indexOfLastChallenge = currentPage * challengesPerPage;
+  const indexOfFirstChallenge = indexOfLastChallenge - challengesPerPage;
+  const currentChallenges = challenges.slice(indexOfFirstChallenge, indexOfLastChallenge);
 
-  const handleCloseChallengeModal = () => {
-    setChallengeModalOpen(false);
-  };
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  const handleAddChallenge = async (challenge: ChallengeFormData) => {
-    try {
-      // Add the challenge to Firestore
-      const challengesRef = collection(db, "challenges");
-      await addDoc(challengesRef, { challenge });
-      console.log(`Added challenge to Firestore: ${challenge}`);
-    } catch (error) {
-      console.error("Error adding challenge to Firestore:", error);
-    } finally {
-      handleCloseChallengeModal();
-    }
-  };
+
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -79,23 +67,13 @@ const ChallengeCard: React.FC<ChallengeDataProps> = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="rounded-md bg-transparent p-4 h-36 w-full border-2 border-dashed border-lime-600 flex items-center justify-center">
-        <button
-          onClick={handleOpenChallengeModal}
-          className="inline-flex items-center gap-3 font-bold text-2xl text-gray-500 hover:text-lime-700"
-        >
-          <span>
-            <PiPlus className="" />
-          </span>{" "}
-          Add Challenge
-        </button>
-      </div>
-      <div className="grid grid-cols-2 gap-4 items-center justify-center">
-        {challenges.map((item) => (
+    <div className="flex flex-col gap-6 px-8 mt-[7%] mb-10">
+      <h4 className='text-black font-bold text-4xl py-4'>Available Challenges</h4>
+      <div className="grid grid-cols-1 gap-4 items-center justify-center">
+        {currentChallenges.map((item) => (
           <div key={item.id} className="w-full">
             <div className="w-full bg-black text-white rounded-full shadow flex gap-4 items-center">
-              <div className="w-36 h-auto p-5 bg-white rounded-full flex items-center justify-center">
+              <div className=" w-28 h-auto p-5 bg-white rounded-full flex items-center justify-center">
                 <Image src={CupLogo} alt="Cup Logo" />
               </div>
               <div className="py-3">
@@ -116,7 +94,6 @@ const ChallengeCard: React.FC<ChallengeDataProps> = () => {
                 </div>
               </div>
             </div>
-
             {showDetailModal === item.id && (
               <ChallengeModal
                 key={item.id}
@@ -126,15 +103,21 @@ const ChallengeCard: React.FC<ChallengeDataProps> = () => {
             )}
           </div>
         ))}
+
       </div>
-      {/* Challenge Modal */}
-      <AddChallengeModal
-        isOpen={isChallengeModalOpen}
-        onClose={handleCloseChallengeModal}
-        onAddChallenge={handleAddChallenge}
-      />
+      <div className="flex justify-center items-center space-x-4 mt-4">
+        {Array.from({ length: Math.ceil(challenges.length / challengesPerPage) }).map((_, index) => (
+          <button
+            key={index}
+            onClick={() => paginate(index + 1)}
+            className={`px-4 py-2 rounded-full ${currentPage === index + 1 ? 'bg-lime-500 text-white' : 'bg-gray-300'}`}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default ChallengeCard;
+export default AvailableChallenges;
