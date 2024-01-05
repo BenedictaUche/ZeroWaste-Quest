@@ -2,17 +2,21 @@ import React, { useState } from "react";
 import { PiX } from "react-icons/pi";
 import { Button } from "@/components/ui/button";
 
+type ChallengeFormData = {
+  title: string;
+  description: string;
+  duration: string;
+};
+
+
 type ChallengeModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onAddChallenge: (challenge: string) => void;
+  onAddChallenge: (challenge: ChallengeFormData) => void;
 };
 
-const AddChallengeModal: React.FC<ChallengeModalProps> = ({
-  isOpen,
-  onClose,
-  onAddChallenge,
-}) => {
+
+const AddChallengeModal: React.FC<ChallengeModalProps> = ({ isOpen, onClose, onAddChallenge, }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
