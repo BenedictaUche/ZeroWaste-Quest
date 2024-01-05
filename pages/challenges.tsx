@@ -61,7 +61,7 @@ export const challengeData: ChallengeData[] = [
 const Challenges = () => {
 
   return (
-    <div className="bg-gray-100 h-screen">
+    <div className="bg-gray-100 h-min-screen px-4 py-6">
       <Navbar />
       <div className="px-10">
         <h4 className="font-bold text-2xl text-lime-700 py-4">
