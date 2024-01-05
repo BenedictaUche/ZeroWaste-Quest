@@ -34,6 +34,7 @@ const AddChallengeModal: React.FC<ChallengeModalProps> = ({ isOpen, onClose, onA
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onAddChallenge(formData);
+    console.log(formData);
     onClose();
   };
 

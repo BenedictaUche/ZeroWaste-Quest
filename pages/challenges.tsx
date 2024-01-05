@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from "react";
 import Navbar from "@/components/nav";
 import ChallengeCard from "@/components/challengesTask/challenge-card";
@@ -61,7 +63,7 @@ export const challengeData: ChallengeData[] = [
 const Challenges = () => {
 
   return (
-    <div className="bg-gray-100 h-min-screen ">
+    <div className="bg-gray-100 h-min-screen">
       <Navbar />
       <div className="px-10">
         <h4 className="font-bold text-2xl text-lime-700 py-4">
