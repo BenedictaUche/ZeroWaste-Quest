@@ -19,7 +19,8 @@ type ChallengeFormData = {
 
 interface ChallengeDataProps {
   challenge: any;
-  onClose: () => void;
+
+  // onClose: () => void;
 }
 
 const ChallengeCard: React.FC<ChallengeDataProps> = () => {

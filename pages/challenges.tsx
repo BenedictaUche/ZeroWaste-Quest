@@ -70,13 +70,15 @@ const Challenges = () => {
         <h4 className="font-bold text-2xl text-lime-700 py-4">
           Your Challenges
         </h4>
-        <ChallengeCard challengeData={challengeData} />
+        <ChallengeCard challenge={challengeData} />
       </div>
 
-      <AvailableChallenges />
+      <AvailableChallenges challenge={challengeData} pageSize={3} onClose={() => {}} />
       <Leaderboard />
     </div>
   );
+
+
 };
 
 export default Challenges;
