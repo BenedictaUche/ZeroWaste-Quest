@@ -211,6 +211,7 @@ const Signup: React.FC = () => {
           name="goal"
           id="goal"
           onChange={handleChange}
+          placeholder="Waste Reduction Goal"
           className="bg-gray-100 p-2  shadow-md placeholder:text-sm"
         />
 

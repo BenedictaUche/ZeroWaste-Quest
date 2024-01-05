@@ -6,6 +6,7 @@ import ChallengeCard from "@/components/challengesTask/challenge-card";
 import CupLogo from "@/public/coffee-cup.svg";
 import CutleryLogo from "@/public/fork-kitchen.svg";
 import Leaderboard from "@/components/leaderboard";
+import AvailableChallenges from "@/components/availableChallenges";
 
 
 interface ChallengeData {
@@ -71,6 +72,8 @@ const Challenges = () => {
         </h4>
         <ChallengeCard challengeData={challengeData} />
       </div>
+
+      <AvailableChallenges />
       <Leaderboard />
     </div>
   );
