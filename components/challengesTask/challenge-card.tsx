@@ -10,6 +10,12 @@ import { db } from "@/config/firebase";
 import { collection, addDoc } from "firebase/firestore";
 
 
+type ChallengeFormData = {
+  title: string;
+  description: string;
+  duration: string;
+};
+
 interface ChallengeDataProps {
   challengeData: {
     id: number;
@@ -41,7 +47,7 @@ const ChallengeCard = ({ challengeData }: ChallengeDataProps) => {
     setChallengeModalOpen(false);
   };
 
-  const handleAddChallenge = async (challenge: string) => {
+  const handleAddChallenge = async (challenge: ChallengeFormData) => {
     try {
       // Add the challenge to Firestore
       const challengesRef = collection(db, 'challenges');
