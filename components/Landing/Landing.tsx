@@ -84,7 +84,7 @@ const Landing = () => {
         <h3 className="text-center text-sm text-lime-950 font-normal tracking-[1rem] py-10">
           {dayName}, {monthName} {dayNumber}, {year}
         </h3>
-        <h1 className="text-lime-950 text-[100px] md:text-5xl lg:text-6xl font-normal text-center">
+        <h1 className="text-lime-950 text-[80px] md:text-5xl lg:text-6xl font-normal text-center">
           zerowaste-quest
         </h1>
         <p className="text-center text-lime-950 text-lg md:text-base lg:text-lg xl:text-xl font-medium w-full md:w-[600px] lg:w-[800px]">
@@ -102,7 +102,7 @@ const Landing = () => {
           className="w-full md:w-[1100px] h-[500px] py-10"
         />
       </div>
-      <div style={backgroundStyle}>
+      <div style={backgroundStyle} className="md:hidden">
         <h2 className="text-center text-white text-8xl md:text-4xl lg:text-5xl font-normal tracking-widest">
           Waste not, want what&apos;s not.
         </h2>
@@ -113,17 +113,17 @@ const Landing = () => {
       </div>
       <div className="bg-[#2A3C24] px-[8%] flex flex-col gap-8">
         <div className=" pt-16">
-          <h2 className="text-white text-4xl font-normal py-8">
+          <h2 className="text-white text-4xl font-normal py-8 text-center">
             Challenges galore!
           </h2>
-          <div className="text-white font-normal text-base flex justify-between">
-            <p className="w-[476px]">
+          <div className="text-white font-normal text-base flex flex-col md:flex-row justify-between">
+            <p className="w-full md:w-[476px]">
               From recycling rubbish to adopting renewable energy, our
               challenges cater to every eco-warrior&apos;s ambition. Scroll through,
               select and set personal goals. Saving Earth just became more fun
               and satisfying!
             </p>
-            <p className="w-[476px]">
+            <p className="w-full md:w-[476px] mt-5 md:mt-0">
               From recycling rubbish to adopting renewable energy, our
               challenges cater to every eco-warrior&apos;s ambition. Scroll through,
               select and set personal goals. Saving Earth just became more fun
@@ -131,28 +131,30 @@ const Landing = () => {
             </p>
           </div>
         </div>
-        <div className="flex justify-between items-center py-[10%]">
+        <div className="flex flex-col md:flex-row justify-between items-center py-[10%]">
           {warriors.map((warrior) => {
             return (
-              <div key={warrior.name}>
-              <div className="flex flex-col items-center">
-                <Image src={warrior.image} alt="Picture of a person" />
-                <h3 className="text-lime-400 text-base font-normal">
-                  {warrior.name}
-                </h3>
-                <p className="text-white text-base font-normal">
-                  {warrior.description}
-                </p>
-              </div>
+              <div key={warrior.name} className="w-full md:w-1/3">
+                <div className="flex flex-col items-center">
+                  <Image src={warrior.image} alt="Picture of a person" />
+                  <h3 className="text-lime-400 text-base font-normal">
+                    {warrior.name}
+                  </h3>
+                  <p className="text-white text-base font-normal text-center">
+                    {warrior.description}
+                  </p>
+                </div>
               </div>
             );
           })}
         </div>
         <div>
-            <h2>got curly questions?</h2>
+          <h2 className="text-center text-white">Got curly questions?</h2>
         </div>
         <div>
-            <p className="text-lime-200 text-base font-bold">©2023 EcoChallenge. All (green) rights reserved.</p>
+          <p className="text-lime-200 text-base font-bold text-center">
+            ©2023 EcoChallenge. All (green) rights reserved.
+          </p>
         </div>
       </div>
     </>
